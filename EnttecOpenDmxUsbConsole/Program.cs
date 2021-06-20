@@ -20,6 +20,14 @@ namespace EnttecOpenDmxUsbConsole
         static int led2Offset = 8;
         static int led3Offset = 9;
         static int led4Offset = 10;
+        static int led5Offset = 11;
+        static int led6Offset = 12;
+        static int led7Offset = 13;
+        static int led8Offset = 14;
+        static int led9Offset = 15;
+        static int led10Offset = 16;
+        static int led11Offset = 17;
+        static int led12Offset = 18;
 
 
         static void Main(string[] args)
