@@ -8,6 +8,20 @@ namespace EnttecOpenDmxUsbConsole
 {
     class Program
     {
+        static Logic.DmxCommands DmxCommandObj;
+
+        static int dmxAddress = 168;
+
+        static int panOffset = 0;
+        static int tiltOffset = 1;
+        static int continuesOffset = 5;
+        static int dimmerOffset = 6;
+        static int led1Offset = 7;
+        static int led2Offset = 8;
+        static int led3Offset = 9;
+        static int led4Offset = 10;
+
+
         static void Main(string[] args)
         {
             try
@@ -26,11 +40,11 @@ namespace EnttecOpenDmxUsbConsole
                 Console.WriteLine("Error Connecting to Enttec USB Device");
             }
 
-            var dmxCommandObj = new Logic.DmxCommands(dmxAddress);
-            
+            DmxCommandObj = new Logic.DmxCommands(dmxAddress);
 
 
-            dmxCommandObj.ResetAll();
+
+            ResetAll();
             Thread.Sleep(2500);
 
 
@@ -49,24 +63,24 @@ namespace EnttecOpenDmxUsbConsole
                 new DmxCommand { Offset = led4Offset, Value = (int)Util.Colors.White }
             };
 
-            dmxCommandObj.SendDmxCommands(panAndTiltCommand);
+            DmxCommandObj.SendDmxCommands(panAndTiltCommand);
             Thread.Sleep(5000);
             #endregion
 
 
             #region Send single command
-            dmxCommandObj.ResetAll();
+            ResetAll();
             Thread.Sleep(2500);
             Console.WriteLine();
             Console.WriteLine("Running single preprogrammed command");
 
-            dmxCommandObj.SendDmxCommand(panOffset, 255, 2000);
+            DmxCommandObj.SendDmxCommand(panOffset, 255, 2000);
             Thread.Sleep(5000);
             #endregion
 
 
             #region Send commands from console            
-            dmxCommandObj.ResetAll();
+            ResetAll();
             Thread.Sleep(2500);
 
             Console.WriteLine();
@@ -86,11 +100,11 @@ namespace EnttecOpenDmxUsbConsole
                         var character = line.Split(' ');
                         if (character.Length > 1)
                         {
-                            dmxCommandObj.SendDmxCommand(int.Parse(character[0]), int.Parse(character[1]));
+                            DmxCommandObj.SendDmxCommand(int.Parse(character[0]), int.Parse(character[1]));
                         }
                         else
                         {
-                            dmxCommandObj.SendDmxCommand(panOffset, int.Parse(line));
+                            DmxCommandObj.SendDmxCommand(panOffset, int.Parse(line));
                         }
                     }
                     catch (ArgumentOutOfRangeException)
@@ -106,10 +120,29 @@ namespace EnttecOpenDmxUsbConsole
             }
             #endregion
 
-            dmxCommandObj.ResetAll();
+            ResetAll();
 
             Console.WriteLine();
             Console.WriteLine("Done");
+        }
+
+
+        public static void ResetAll()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Resetting all");
+            var resetCommand = new List<DmxCommand>()
+            {
+                new DmxCommand { Offset = panOffset, Value = 0 },
+                new DmxCommand { Offset = tiltOffset, Value = 0 },
+                new DmxCommand { Offset = continuesOffset, Value = 0 },
+                new DmxCommand { Offset = dimmerOffset, Value = 0 },
+                new DmxCommand { Offset = led1Offset, Value = 0 },
+                new DmxCommand { Offset = led2Offset, Value = 0 },
+                new DmxCommand { Offset = led3Offset, Value = 0 },
+                new DmxCommand { Offset = led4Offset, Value = 0 }
+            };
+            DmxCommandObj.SendDmxCommands(resetCommand);
         }
     }
 }
